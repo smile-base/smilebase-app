@@ -3,5 +3,6 @@ pandas
 openpyxl  
 streamlit-authenticator
 Numpy
-Matplotlib/plotly
+Matplotlib
+plotly
 Sqlalchemy
