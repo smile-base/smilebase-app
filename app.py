@@ -12,7 +12,7 @@ if "username" not in st.session_state:
 
 # --- 共通ログイン情報（チーム用） ---
 stored_user = "smileteam2025"
-stored_hash = "$2b$12$rj8jSRfB.pSa5lqxaM5kiOlk/IlacWbrD87mvhpIwLZXWUGVgbsVi"  # ← ここに事前生成したハッシュを貼る
+stored_hash = "$2b$12$rj8jSRfB.pSa5lqxaM5kiOlk/IlacWbrD87mvhpIwLZXWUGVgbsVi"
 
 # --- ログアウト処理 ---
 def logout():
@@ -99,6 +99,23 @@ def import_csv(file):
             int(row["stock"])
         )
 
+# --- ログインフォーム（ログイン専用） ---
+def login_form():
+    st.set_page_config(page_title="ログイン", page_icon="🔐")
+    st.title("SMILE☺BASE ログイン")
+    username = st.text_input("ユーザー名")
+    password = st.text_input("パスワード", type="password")
+    login = st.button("ログイン")
+
+    if login:
+        if username == stored_user and bcrypt.checkpw(password.encode(), stored_hash.encode()):
+            st.session_state["authentication_status"] = True
+            st.session_state["username"] = username
+            st.experimental_rerun()
+        else:
+            st.session_state["authentication_status"] = False
+            st.error("ログインに失敗しました。もう一度お試しください。")
+
 # --- 在庫管理UI（ログイン後のみ表示） ---
 def show_inventory_ui():
     init_db()
@@ -119,21 +136,6 @@ def show_inventory_ui():
         if submitted and name and sku:
             add_item(sku, name, category, cost, price, stock)
             st.success(f"✅ {name} を登録しました")
-#--- ログインフォーム---            
-def login_form():
-    st.title("SMILE☺BASE ログイン")
-    username = st.text_input("ユーザー名")
-    password = st.text_input("パスワード", type="password")
-    login = st.button("ログイン")
-
-    if login:
-        if username == stored_user and bcrypt.checkpw(password.encode(), stored_hash.encode()):
-            st.session_state["authentication_status"] = True
-            st.session_state["username"] = username
-            st.experimental_rerun()  # ← これがポイント！
-        else:
-            st.session_state["authentication_status"] = False
-            st.error("ログインに失敗しました。もう一度お試しください。")
 
     # 商品一覧
     st.subheader("📦 商品一覧")
@@ -203,8 +205,6 @@ def login_form():
         conn.close()
         st.warning("⚠️ 全商品データを削除し、IDをリセットしました")
 
-
-# --- ログイン状態による分岐 ---
 # --- 表示切り替え（ログイン状態によってUIを分岐） ---
 if st.session_state.get("authentication_status") is True:
     st.success(f"{st.session_state['username']} さん、ようこそ！")
