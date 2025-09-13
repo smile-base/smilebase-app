@@ -12,7 +12,7 @@ if "username" not in st.session_state:
 
 # --- 共通ログイン情報（チーム用） ---
 stored_user = "smileteam2025"
-stored_hash = "$2b$12$effdZdl.BpS2HVDeNg0X6.nrJfzUcMNcu/dKO6w5YSoSm9iuaCHTC"  # ← ここに事前生成したハッシュを貼る
+stored_hash = "$2b$12$UO/aJjDL9ysSH/RpjKxENu3PeJ..gWN2sbFKcfmJidUnx4tgyYaLq"  # ← ここに事前生成したハッシュを貼る
 
 # --- ログアウト処理 ---
 def logout():

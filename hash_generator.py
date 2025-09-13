@@ -1,5 +1,5 @@
 import bcrypt
 
-password = "smilepass"
+password = "smilebase2025zdrewqaz"
 hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 print(hashed.decode())
