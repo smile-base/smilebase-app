@@ -189,17 +189,26 @@ def show_inventory_ui():
         st.warning("⚠️ 全商品データを削除し、IDをリセットしました")
 
 # --- ログインUI ---
-st.title("SMILE☺BASE ログイン")
-username = st.text_input("ユーザー名")
-password = st.text_input("パスワード", type="password")
-login = st.button("ログイン")
-# --- ログイン判定　---
-if login:
-    if username == stored_user and bcrypt.checkpw(password.encode(), stored_hash.encode()):
-        st.session_state["authentication_status"] = True
-        st.session_state["username"] = username
-    else:
-        st.session_state["authentication_status"] = False
+if st.session_state["authentication_status"] is None:
+    st.title("SMILE☺BASE ログイン")
+    username = st.text_input("ユーザー名")
+    password = st.text_input("パスワード", type="password")
+    login = st.button("ログイン")
+
+    if login:
+        if username == stored_user and bcrypt.checkpw(password.encode(), stored_hash.encode()):
+            st.session_state["authentication_status"] = True
+            st.session_state["username"] = username
+        else:
+            st.session_state["authentication_status"] = False
+
+elif st.session_state["authentication_status"] is False:
+    st.error("ログインに失敗しました。もう一度お試しください。")
+    st.session_state["authentication_status"] = None  # 再表示のためにリセット
+
+elif st.session_state["authentication_status"] is True:
+    st.success(f"{st.session_state['username']} さん、ようこそ！")
+    show_inventory_ui()
 
 # --- ログイン状態による分岐 ---
 if st.session_state["authentication_status"] is None:
