@@ -1,4 +1,4 @@
-import streamlit_authenticator as stauth
+from streamlit_authenticator.utilities.hasher import Hasher
 
-hashed_pw = stauth.Hasher(['smilebase2025zdrewqaz']).generate()
+hashed_pw = Hasher().hash('smilebase2025zdrewqaz')
 print(hashed_pw)

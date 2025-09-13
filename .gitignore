@@ -1,1 +1,3 @@
 inventory.db
+config.yaml
+.streamlit/secrets.toml

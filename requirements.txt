@@ -6,3 +6,4 @@ Numpy
 Matplotlib
 plotly
 Sqlalchemy
+bcrypt
