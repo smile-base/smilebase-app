@@ -111,7 +111,7 @@ def login_form():
         if username == stored_user and bcrypt.checkpw(password.encode(), stored_hash.encode()):
             st.session_state["authentication_status"] = True
             st.session_state["username"] = username
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.session_state["authentication_status"] = False
             st.error("ログインに失敗しました。もう一度お試しください。")
