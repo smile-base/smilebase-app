@@ -119,6 +119,21 @@ def show_inventory_ui():
         if submitted and name and sku:
             add_item(sku, name, category, cost, price, stock)
             st.success(f"✅ {name} を登録しました")
+#--- ログインフォーム---            
+def login_form():
+    st.title("SMILE☺BASE ログイン")
+    username = st.text_input("ユーザー名")
+    password = st.text_input("パスワード", type="password")
+    login = st.button("ログイン")
+
+    if login:
+        if username == stored_user and bcrypt.checkpw(password.encode(), stored_hash.encode()):
+            st.session_state["authentication_status"] = True
+            st.session_state["username"] = username
+            st.experimental_rerun()  # ← これがポイント！
+        else:
+            st.session_state["authentication_status"] = False
+            st.error("ログインに失敗しました。もう一度お試しください。")
 
     # 商品一覧
     st.subheader("📦 商品一覧")
@@ -211,12 +226,9 @@ elif st.session_state["authentication_status"] is True:
     show_inventory_ui()
 
 # --- ログイン状態による分岐 ---
-if st.session_state["authentication_status"] is None:
-    st.warning("ユーザー名とパスワードを入力してください")
-    st.stop()
-elif st.session_state["authentication_status"] is False:
-    st.error("ログインに失敗しました")
-    st.stop()
-elif st.session_state["authentication_status"] is True:
+# --- 表示切り替え（ログイン状態によってUIを分岐） ---
+if st.session_state.get("authentication_status") is True:
     st.success(f"{st.session_state['username']} さん、ようこそ！")
     show_inventory_ui()
+else:
+    login_form()
