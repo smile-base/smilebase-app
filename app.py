@@ -11,8 +11,8 @@ if "username" not in st.session_state:
     st.session_state["username"] = ""
 
 # --- 共通ログイン情報（チーム用） ---
-stored_user = "smileteam"
-stored_hash = "$2b$12$WZzYkUuYwzvJZz0ZkQZK0u1xJbYxYzYxYzYxYzYxYzYxYzYxYzYxG"  # ← ここに事前生成したハッシュを貼る
+stored_user = "smileteam2025"
+stored_hash = "$2b$12$effdZdl.BpS2HVDeNg0X6.nrJfzUcMNcu/dKO6w5YSoSm9iuaCHTC"  # ← ここに事前生成したハッシュを貼る
 
 # --- ログアウト処理 ---
 def logout():
@@ -193,7 +193,7 @@ st.title("SMILE☺BASE ログイン")
 username = st.text_input("ユーザー名")
 password = st.text_input("パスワード", type="password")
 login = st.button("ログイン")
-
+# --- ログイン判定　---
 if login:
     if username == stored_user and bcrypt.checkpw(password.encode(), stored_hash.encode()):
         st.session_state["authentication_status"] = True
