@@ -203,4 +203,11 @@ if login:
 
 # --- ログイン状態による分岐 ---
 if st.session_state["authentication_status"] is None:
-    st.warning("ユーザー名とパスワードを入力してください。")
+    st.warning("ユーザー名とパスワードを入力してください")
+    st.stop()
+elif st.session_state["authentication_status"] is False:
+    st.error("ログインに失敗しました")
+    st.stop()
+elif st.session_state["authentication_status"] is True:
+    st.success(f"{st.session_state['username']} さん、ようこそ！")
+    show_inventory_ui()
