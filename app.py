@@ -3,13 +3,21 @@ import sqlite3
 import pandas as pd
 from datetime import datetime
 import bcrypt
-import os
 
 # --- セッション初期化 ---
 if "authentication_status" not in st.session_state:
     st.session_state["authentication_status"] = None
 if "username" not in st.session_state:
     st.session_state["username"] = ""
+
+# --- 共通ログイン情報（チーム用） ---
+stored_user = "smileteam"
+stored_hash = "$2b$12$WZzYkUuYwzvJZz0ZkQZK0u1xJbYxYzYxYzYxYzYxYzYxYzYxYzYxG"  # ← ここに事前生成したハッシュを貼る
+
+# --- ログアウト処理 ---
+def logout():
+    st.session_state.clear()
+    st.rerun()
 
 # --- DB設定 ---
 DB_NAME = "inventory.db"
@@ -90,17 +98,13 @@ def import_csv(file):
             row["selling_price"],
             int(row["stock"])
         )
-        
-def logout():
-    st.session_state.clear()
-    st.rerun()
 
 # --- 在庫管理UI（ログイン後のみ表示） ---
 def show_inventory_ui():
     init_db()
     st.set_page_config(page_title="在庫管理", page_icon="📦")
+    st.sidebar.button("🔓 ログアウト", on_click=logout)
     st.title("SMILE☺BASE 在庫管理")
-    st.sidebar.button("🔓 ログアウト", on_click=lambda: logout())
 
     # 商品登録
     with st.form("add_form"):
@@ -121,8 +125,6 @@ def show_inventory_ui():
     df = get_items()
 
     if not df.empty:
-        df["cost_price"] = pd.to_numeric(df["cost_price"], errors="coerce")
-        df["selling_price"] = pd.to_numeric(df["selling_price"], errors="coerce")
         df["利益額"] = df["selling_price"] - df["cost_price"]
         df["利益率（%）"] = (df["利益額"] / df["cost_price"] * 100).round(2)
         df["おすすめ"] = df["利益率（%）"].apply(lambda x: "🌟おすすめ" if x >= RECOMMEND_THRESHOLD else "")
@@ -188,9 +190,6 @@ def show_inventory_ui():
 
 # --- ログインUI ---
 st.title("SMILE☺BASE ログイン")
-stored_user = os.getenv("SMILEBASE_USER")
-stored_hash = os.getenv("SMILEBASE_PASSHASH")
-
 username = st.text_input("ユーザー名")
 password = st.text_input("パスワード", type="password")
 login = st.button("ログイン")
@@ -204,11 +203,4 @@ if login:
 
 # --- ログイン状態による分岐 ---
 if st.session_state["authentication_status"] is None:
-    st.warning("ユーザー名とパスワードを入力してください")
-    st.stop()
-elif st.session_state["authentication_status"] is False:
-    st.error("ログインに失敗しました")
-    st.stop()
-elif st.session_state["authentication_status"] is True:
-    st.success(f"{st.session_state['username']} さん、ようこそ！")
-    show_inventory_ui()
+    st.warning("ユーザー名とパスワードを入力してください。")
